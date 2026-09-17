@@ -19,7 +19,7 @@ Core services are those that directly wrap OS primitives and are implemented by 
 |---|---|
 | **Mutex** | Mutual-exclusion lock and RAII `ScopeLock` helper. |
 | **CountingSemaphore** | Counting semaphore for resource counting and thread synchronization. |
-| **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. |
+| **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. Priority is platform-defined; `TASK_PRIORITY_DEFAULT` selects the platform default. The Posix backend additionally accepts `Os::Posix::Task::PosixTask::TASK_PRIORITY_NON_REALTIME` (FPP: `Os.Posix.TASK_PRIORITY_NON_REALTIME`) to run a task under the non-realtime `SCHED_OTHER` policy rather than `SCHED_RR`; see [Non-Realtime Tasks on POSIX](../../docs/user-manual/framework/run-multi-core.md#non-realtime-tasks-on-posix). |
 | **Queue** | Inter-task message passing with configurable depth, priority support, and blocking modes. |
 
 ### 2.2 File system
@@ -153,7 +153,8 @@ For performance-critical services, the OSAL supports **compile-time selection** 
 - More complex build configuration
 
 **Currently Supported Services:**
-- **RawTime**
+- **RawTime** (`config/OsDelegateRawTime.hpp`, `OS_RAW_TIME_HEADER`)
+- **Mutex** (`config/OsDelegateMutex.hpp`, `OS_MUTEX_HEADER`; `lock()`/`unLock()`/`ScopeLock` live on `MutexInterface`, so they work with any aliased implementation)
 
 The configuration header mechanism allows projects to opt into compile-time selection while maintaining link-time selection as the default for backward compatibility.
 
